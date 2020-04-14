@@ -6,6 +6,6 @@ using Dates
 
 include("process_rawdata.jl")
 
-export get_rawdata, process_pokes
+export get_rawdata, process_pokes, matread
 
 end # module

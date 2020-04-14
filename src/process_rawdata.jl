@@ -1,10 +1,10 @@
-function get_rawdata(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData")
+function get_rawdata(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData/rawdata")
     files = readdir(dir)
     filter!(t-> occursin("data_@switching2",t),files)
     return (dir,files)
 end
 
-function process_pokes(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData")
+function process_pokes(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData/rawdata")
     dir, files_list = get_rawdata(dir = dir)
 
     fulldf = DataFrame(In = Float64[],Out = Float64[],
@@ -19,7 +19,6 @@ function process_pokes(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipp
         preday = match(r"\d{6}",filename).match
         println(preday)
         Day = Date("20"*replace(preday,r"a.mat" => ""),"yyyymmdd")
-
         switching_type = match(r"switching\d{1}",filename).match
         outcomesR = ongoing["saved_history"][switching_type * "_RrewList"]
         outcomesL = ongoing["saved_history"][switching_type * "_LrewList"]
@@ -37,26 +36,32 @@ function process_pokes(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipp
                 side = "L"
                 outcomes = outcomesL[idx]
             else
-                println("weird lack of pokes trial $idx session $filename")
+                # println("weird lack of pokes trial $idx session $filename")
                 # continue
                 p = nothing
             end
             if !isnothing(p)
                 for i  = 1:size(p,1)
                     rew = i>20 ? false : Bool(outcomes[i])
+                    p[1] = isnan(p[1]) ? default_in : p[1]
+                    p[end] = isnan(p[end]) ? default_out : p[end]
                     push!(df,[p[i,1],p[i,2],side,rew,idx])
                 end
             end
             activity = t["pokes"]["C"]
-            for i = 1:size(activity,1)
+            if size(activity,1)  == 0
+                activity_in = default_in
+                activity_out = default_out
+            else
                 activity_in = isnan(activity[1]) ? default_in : activity[1]
-                activity_out = isnan(activity[2]) ? default_out : activity[2]
+                activity_out = isnan(activity[end]) ? default_out : activity[end]
                 push!(df,[activity_in,activity_out,"C",false,idx])
             end
         end
         sort!(df,:In)
         df[!,:MouseID] .= MouseID
         df[!,:Day] .= Day
+        test = size(df,1) == length(trials_vec)
         append!(fulldf,df)
     end
     return fulldf
