@@ -1,17 +1,16 @@
 function get_rawdata(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData")
     files = readdir(dir)
     filter!(t-> occursin("data_@switching2",t),files)
+    return (dir,files)
 end
 
-function process_pokes()
-    filelist = get_rawdata()
-    process_exited(filelist)
-end
+function process_pokes(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData")
+    dir, files_list = get_rawdata(dir = dir)
 
-function process_pokes(files_list)
     fulldf = DataFrame(In = Float64[],Out = Float64[],
         event = String[], Reward = Bool[], Trial = Int64[],
         MouseID = String[], Day = Date[])
+
     for filename in files_list
         println(filename)
         ongoing_file = joinpath(dir,filename)
