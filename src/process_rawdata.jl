@@ -38,11 +38,14 @@ function process_pokes(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipp
                 outcomes = outcomesL[idx]
             else
                 println("weird lack of pokes trial $idx session $filename")
-                continue
+                # continue
+                p = nothing
             end
-            for i  = 1:size(p,1)
-                rew = i>20 ? false : Bool(outcomes[i])
-                push!(df,[p[i,1],p[i,2],side,rew,idx])
+            if !isnothing(p)
+                for i  = 1:size(p,1)
+                    rew = i>20 ? false : Bool(outcomes[i])
+                    push!(df,[p[i,1],p[i,2],side,rew,idx])
+                end
             end
             activity = t["pokes"]["C"]
             for i = 1:size(activity,1)
