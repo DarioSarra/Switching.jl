@@ -1,0 +1,117 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+for g=[1 4]
+    gen=['CIT'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_CIT']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160316a']
+            ['data_@switching2_Dario_',mouse,'_160317a']};
+        list.([mouse,'_CIT']).gen = gen;
+        list.([mouse,'_CIT']).CNO = [1 0];
+    end
+end
+for g=[2 3]
+    gen=['CIT'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_CIT']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160316a']
+            ['data_@switching2_Dario_',mouse,'_160317a']};
+        list.([mouse,'_CIT']).gen = gen;
+        list.([mouse,'_CIT']).CNO = [0 1];
+    end
+end
+%
+for g=[1 4]
+    gen=['MET'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_MET']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160323a']
+            ['data_@switching2_Dario_',mouse,'_160324a']};
+        list.([mouse,'_MET']).gen = gen;
+        list.([mouse,'_MET']).CNO = [1 0];
+    end
+end
+for g=[2 3]
+    gen=['MET'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_MET']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160323a']
+            ['data_@switching2_Dario_',mouse,'_160324a']};
+        list.([mouse,'_MET']).gen = gen;
+        list.([mouse,'_MET']).CNO = [0 1];
+    end
+end
+%
+for g=[1 4]
+    gen=['ALT'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_ALT']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160330a']
+            ['data_@switching2_Dario_',mouse,'_160331a']};
+        list.([mouse,'_ALT']).gen = gen;
+        list.([mouse,'_ALT']).CNO = [1 0];
+    end
+end
+for g=[2 3]
+    gen=['ALT'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_ALT']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160330a']
+            ['data_@switching2_Dario_',mouse,'_160331a']};
+        list.([mouse,'_ALT']).gen = gen;
+        list.([mouse,'_ALT']).CNO = [0 1];
+    end
+end
+%
+for g=[1 4]
+    gen=['WAY'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_WAY']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160406a']
+            ['data_@switching2_Dario_',mouse,'_160407a']};
+        list.([mouse,'_WAY']).gen = gen;
+        list.([mouse,'_WAY']).CNO = [1 0];
+    end
+end
+for g=[2 3]
+    gen=['WAY'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_WAY']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160406a']
+            ['data_@switching2_Dario_',mouse,'_160407a']};
+        list.([mouse,'_WAY']).gen = gen;
+        list.([mouse,'_WAY']).CNO = [0 1];
+    end
+end
+%
+for g=[1 4]
+    gen=['SB'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_SB']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160525a']
+            ['data_@switching2_Dario_',mouse,'_160526a']};
+        list.([mouse,'_SB']).gen = gen;
+        list.([mouse,'_SB']).CNO = [0 1];
+    end
+end
+for g=[2 3]
+    gen=['SB'];
+    for m=1:5
+        mouse=[get_group(g),num2str(m)];
+        list.([mouse,'_SB']).fnames = {
+            ['data_@switching2_Dario_',mouse,'_160525a']
+            ['data_@switching2_Dario_',mouse,'_160526a']};
+        list.([mouse,'_SB']).gen = gen;
+        list.([mouse,'_SB']).CNO = [1 0];
+    end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

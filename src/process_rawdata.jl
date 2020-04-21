@@ -7,12 +7,10 @@ function process_session(filename::String)
     Session = MouseID * "_" * string(Day)
     Phase = get(Phase_Calendar,Day,"training")
     Group = string(MouseID[1]) in ["a","d"] ? "Group A" : "Group B"
-    Treatment = get_injection(Phase,Group,Day)
-    #switching_type = match(r"switching\d{1}",filename).match
+    Treatment = get_treatment(Phase,Group,Day) #get_injection(Phase,Group,Day)
     pokes = process_pokes(ongoing)
     sort!(pokes,:PokeIn)
     streaks = process_streaks(pokes)
-
     for df in (pokes,streaks)
         for (n,v) in zip([:MouseID,:Day,:Phase,:Group,:Treatment],[MouseID,Day,Phase,Group,Treatment])
             df[!,n] .= v
