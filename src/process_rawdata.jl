@@ -4,12 +4,19 @@ function process_raw(filename::String)
     preday = match(r"\d{6}",filename).match
     println(preday," ",MouseID)
     Day = Date("20"*replace(preday,r"a.mat" => ""),"yyyymmdd")
-    switching_type = match(r"switching\d{1}",filename).match
-    df = process_raw(ongoing)
-    sort!(df,:PokeIn)
-    df[!,:MouseID] .= MouseID
-    df[!,:Day] .= Day
-    return df
+    Session = MouseID * "_" * string(Day)
+    Phase = get(Phase_Calendar,Day,"training")
+    Group = string(MouseID[1]) in ["a","d"] ? "Group A" : "Group B"
+    Treatment = get_injection(Phase,Group,Day)
+    #switching_type = match(r"switching\d{1}",filename).match
+    pokes = process_raw(ongoing)
+    sort!(pokes,:PokeIn)
+    pokes[!,:MouseID] .= MouseID
+    pokes[!,:Day] .= Day
+    pokes[!,:Phase] .= Phase
+    pokes[!,:Group] .= Group
+    pokes[!,:Treatment] .= Treatment
+    return pokes
 end
 
 function process_raw(ongoing::AbstractDict)
