@@ -1,4 +1,4 @@
-function process_raw(filename::String)
+function process_session(filename::String)
     ongoing = MAT.matread(filename)
     MouseID = ongoing["saved_history"]["SavingSection_ratname"][3]
     preday = match(r"\d{6}",filename).match
@@ -9,7 +9,7 @@ function process_raw(filename::String)
     Group = string(MouseID[1]) in ["a","d"] ? "Group A" : "Group B"
     Treatment = get_injection(Phase,Group,Day)
     #switching_type = match(r"switching\d{1}",filename).match
-    pokes = process_raw(ongoing)
+    pokes = process_pokes(ongoing)
     sort!(pokes,:PokeIn)
     pokes[!,:MouseID] .= MouseID
     pokes[!,:Day] .= Day
@@ -19,12 +19,7 @@ function process_raw(filename::String)
     return pokes
 end
 
-function process_raw(ongoing::AbstractDict)
-    # ongoing = MAT.matread(filename)
-    # MouseID = ongoing["saved_history"]["SavingSection_ratname"][3]
-    # preday = match(r"\d{6}",filename).match
-    # println(preday," ",MouseID)
-    # Day = Date("20"*replace(preday,r"a.mat" => ""),"yyyymmdd")
+function process_pokes(ongoing::AbstractDict)
     # switching_type = match(r"switching\d{1}",filename).match
     outcomesR = ongoing["saved_history"]["switching2_RrewList"]
     outcomesL = ongoing["saved_history"]["switching2_LrewList"]
@@ -77,14 +72,11 @@ function process_raw(ongoing::AbstractDict)
         end
 
     end
-    # sort!(df,:PokeIn)
-    # df[!,:MouseID] .= MouseID
-    # df[!,:Day] .= Day
     #test = size(df,1) == length(trials_vec)
     return df
 end
 
-function process_pokes(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData/rawdata")
+function process_all(;dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData/rawdata")
     dir, files_list = get_rawdata(dir = dir)
 
     fulldf = DataFrame(In = Float64[],Out = Float64[],
