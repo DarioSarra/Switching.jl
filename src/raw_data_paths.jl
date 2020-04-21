@@ -1,4 +1,5 @@
 const Directory = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData/rawdata"
+const saving_dir = "/home/beatriz/mainen.flipping.5ht@gmail.com/Flipping/Datasets/Pharmacology/SwitchingData/Results"
 
 function files_dict(;dir = Directory)
     files = readdir(dir)
