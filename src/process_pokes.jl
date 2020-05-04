@@ -17,16 +17,10 @@ function process_pokes(curr_data::AbstractDataFrame)
         #dd[:,:Poke_Hierarchy] = ismissing(dd[1,:Reward]) ? missing : get_hierarchy(dd[!,:Reward])
         dd[end,:LastPoke] = true
     end
-    hierarchy = by(curr_data,:Trial) do dd
-        (Poke_Hierarchy = ismissing(dd[1,:Reward]) ? [missing] : Switching.get_hierarchy(dd.Reward),)
+    curr_data.Poke_Hierarchy = Vector{Union{Float64,Missing}}(undef,nrow(curr_data))
+    by(curr_data,:Trial) do dd
+         dd[:,:Poke_Hierarchy] = ismissing(dd[1,:Reward]) ? [missing] : Switching.get_hierarchy(dd.Reward)
     end
-    curr_data = join(curr_data,hierarchy, on = :Trial; kind = :left, makeunique = true)
-    # curr_data[!,:Block] = count_sequence(curr_data[!,:Wall])
-    # curr_data[!,:Trial_within_Block] .= 0
-    # by(curr_data,:Block) do dd
-    #     dd[:,:Trial_within_Block] = count_sequence(dd[!,:Side])
-    # end
-    # curr_data[!,:SideHigh] = [x ? "L" : "R" for x in curr_data[!,:SideHigh]]
     curr_data[!,:ReverseTrial] .= reverse(curr_data[:,:Trial])
     curr_data[!,:Correct] = [ismissing(x) ? false : true for x in curr_data[!,:Poke]]
     return curr_data
@@ -34,21 +28,26 @@ end
 
 function adjust_matfile(ongoing::AbstractDict)
     # switching_type = match(r"switching\d{1}",filename).match
+    # extract outcomes and protocols of both sides in 2 simpler variable to be later pointed
     outcomesR = ongoing["saved_history"]["switching2_RrewList"]
     outcomesL = ongoing["saved_history"]["switching2_LrewList"]
     protocolsR = ongoing["saved_history"]["switching2_current_rightMax"]
     protocolsL = ongoing["saved_history"]["switching2_current_leftMax"]
+    #this is what contains the series of pokes
     trials_vec = ongoing["saved_history"]["ProtocolsSection_parsed_events"]
     poke_count = 0
+    #create an empty dataframe wher to push single poke rows info
     df = DataFrame(Poke = Union{Int64,Missing}[], Trial = Int64[],
         PokeIn = Union{Float64,Missing}[],PokeOut = Union{Float64,Missing}[],
         Side = Union{String,Missing}[], Reward = Union{Bool,Missing}[],
-        ROI_In = Float64[], ROI_Out = Float64[], Protocol = Union{Float64,Missing}[])
-    for (idx,t) in enumerate(trials_vec)
+        ROI_In = Float64[], ROI_Out = Float64[], Protocol = Union{String,Missing}[])
 
+    #loops over the trials and index them
+    for (idx,t) in enumerate(trials_vec)
+        # retrieve safe alternative for starting and ending time of pokes when value is missing
         default_in = t["states"]["state_0"][1,2]
         default_out = t["states"]["state_0"][2,1]
-
+        # retrieve the entry and exit time to the ROI
         ROI_activity = t["pokes"]["C"]
         if size(ROI_activity,1)  == 0
             ROI_activity_in = default_in
@@ -56,22 +55,22 @@ function adjust_matfile(ongoing::AbstractDict)
         else
             ROI_activity_in = isnan(ROI_activity[1]) ? default_in : ROI_activity[1]
             ROI_activity_out = isnan(ROI_activity[end]) ? default_out : ROI_activity[end]
-            # push!(df,[activity_in,activity_out,"ROI",false,idx])
         end
-
+        # define in which side was the trial, if no poke was made returns nothing
         if length(t["pokes"]["R"]) > 0
             p = t["pokes"]["R"]
             side = "R"
             outcomes = outcomesR[idx]
-            protocol = protocolsR[idx]
+            protocol = string(protocolsR[idx])
         elseif length(t["pokes"]["L"]) > 0
             p = t["pokes"]["L"]
             side = "L"
             outcomes = outcomesL[idx]
-            protocol = protocolsL[idx]
+            protocol = string(protocolsL[idx])
         else
             p = nothing
         end
+        # if poke isn't nothing loops over the pokes to push all the info in 1 row
         if !isnothing(p)
             for i  = 1:size(p,1)
                 poke_count = poke_count + 1
