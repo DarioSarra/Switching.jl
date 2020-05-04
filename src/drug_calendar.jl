@@ -30,20 +30,20 @@ for d in drugs
     end
 end
 
-Drug_assignment["Citalopram"]["Group A"] = ["none","PreVeh","Cit","PostVeh","sal"]
-Drug_assignment["Citalopram"]["Group B"] = ["none","sal","PreVeh","Cit","PostVeh"]
+Drug_assignment["Citalopram"]["Group A"] = ["None","PreVehicle","Citalopram","PostVehicle","Saline"]
+Drug_assignment["Citalopram"]["Group B"] = ["None","Saline","PreVehicle","Citalopram","PostVehicle"]
 Drug_assignment["Citalopram"]["Days"] = Cit_per
-Drug_assignment["Methysergide"]["Group A"] = ["none","PreVeh","Met","PostVeh","sal"]
-Drug_assignment["Methysergide"]["Group B"] = ["none","sal","PreVeh","Met","PostVeh"]
+Drug_assignment["Methysergide"]["Group A"] = ["None","PreVehicle","Methysergide","PostVehicle","Saline"]
+Drug_assignment["Methysergide"]["Group B"] = ["None","Saline","PreVehicle","Methysergide","PostVehicle"]
 Drug_assignment["Methysergide"]["Days"] = Meth_per
-Drug_assignment["Altanserin"]["Group A"] = ["none","PreVeh","Alt","PostVeh","sal"]
-Drug_assignment["Altanserin"]["Group B"] = ["none","sal","PreVeh","Alt","PostVeh"]
+Drug_assignment["Altanserin"]["Group A"] = ["None","PreVehicle","Altanserin","PostVehicle","Saline"]
+Drug_assignment["Altanserin"]["Group B"] = ["None","Saline","PreVehicle","Altanserin","PostVehicle"]
 Drug_assignment["Altanserin"]["Days"] = Alt_per
-Drug_assignment["Way_100135"]["Group A"] = ["none","PreVeh","WAY","PostVeh","sal"]
-Drug_assignment["Way_100135"]["Group B"] = ["none","sal","PreVeh","WAY","PostVeh"]
+Drug_assignment["Way_100135"]["Group A"] = ["None","PreVehicle","Way_100135","PostVehicle","Saline"]
+Drug_assignment["Way_100135"]["Group B"] = ["None","Saline","PreVehicle","Way_100135","PostVehicle"]
 Drug_assignment["Way_100135"]["Days"] = WAY_per
-Drug_assignment["SB242084"]["Group A"] = ["none","sal","PreVeh","SB","PostVeh"]
-Drug_assignment["SB242084"]["Group B"] = ["none","PreVeh","SB","PostVeh","sal"]
+Drug_assignment["SB242084"]["Group A"] = ["None","Saline","PreVehicle","SB242084","PostVehicle"]
+Drug_assignment["SB242084"]["Group B"] = ["None","PreVehicle","SB242084","PostVehicle","Saline"]
 Drug_assignment["SB242084"]["Days"] = SB_per
 
 
@@ -62,9 +62,9 @@ end
 
 ##
 function get_treatment(drug,group,day)
-    phase = get(Drug_assignment,drug,"none")
-    if phase == "none"
-        return "none"
+    phase = get(Drug_assignment,drug,"None")
+    if phase == "None"
+        return "None"
     else
         v = collect(Drug_assignment[drug]["Days"])
         idx = findall(t-> t == day,v)
