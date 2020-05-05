@@ -17,3 +17,19 @@ get_hierarchy(v) = lag(signedcount(v), default = NaN)
 Base.findall(v::AbstractVector{Union{Bool,Missing}}) = findall(collect(skipmissing(v)))
 Base.findlast(v::AbstractVector{Union{Bool,Missing}}) = findlast(collect(skipmissing(v)))
 Base.findprev(v::AbstractVector{Union{Bool,Missing}},idx) = findprev(collect(skipmissing(v)),idx)
+
+
+function exp_calendar(df::AbstractDataFrame)
+    ExpCalendar = Dict(d => n for (n,d) in enumerate(sort(union(df[:,:Day]))))
+    [get(ExpCalendar,x,Date(2000,12,31)) for x in df[:,:Day]]
+end
+
+function exp_calendar(df::AbstractDataFrame,Phase::Symbol)
+    PhaseCalendar = Dict()
+    by(df,Phase) do dd
+        for (n,d) in enumerate(sort(union(dd[:,:Day])))
+            PhaseCalendar[d] = n
+        end
+    end
+    [get(PhaseCalendar,x,Date(2000,12,31)) for x in df[:,:Day]]
+end

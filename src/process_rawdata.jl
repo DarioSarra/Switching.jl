@@ -36,20 +36,9 @@ function process_all()
             append!(full_streaks,ongoing_streaks)
         end
     end
+    full_pokes[!,:ExpDay] = exp_calendar(full_pokes)
+    full_pokes[!,:ProtocolDay] = exp_calendar(full_pokes,:Phase)
+    full_streaks[!,:ExpDay] = exp_calendar(full_streaks)
+    full_streaks[!,:ProtocolDay] = exp_calendar(full_streaks,:Phase)
     return full_pokes,full_streaks
 end
-#
-#     dir, files_list = get_rawdata(dir = dir)
-#
-#     fulldf = DataFrame(In = Float64[],Out = Float64[],
-#         event = String[], Reward = Bool[], Trial = Int64[],
-#         MouseID = String[], Day = Date[])
-#
-#     for filename in files_list
-#         println(filename)
-#         ongoing_file = joinpath(dir,filename)
-#         df = process_raw(ongoing_file)
-#         append!(fulldf,df)
-#     end
-#     return fulldf
-# end
