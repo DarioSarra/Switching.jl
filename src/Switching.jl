@@ -13,7 +13,6 @@ include("utilities.jl")
 include("process_pokes.jl")
 include("process_streaks.jl")
 include("process_rawdata.jl")
-#include("process_alldata.jl")
 include("drug_calendar.jl")
 
 export matread, DataFrame, by
