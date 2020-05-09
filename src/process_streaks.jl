@@ -3,12 +3,7 @@
 """
 
 function process_streaks(df::DataFrames.AbstractDataFrame)
-    # dayly_vars_list = [:MouseID, :Gen, :Drug, :Day, :Daily_Session, :Box, :Stim_Day, :Condition, :ExpDay, :Area, :Session];
-    # booleans=[:Reward,:Stim,:Wall,:Correct,:Stim_Day]#columns to convert to Bool
-    # for x in booleans
-    #     df[!,x] = eltype(df[!,x]) == Bool ? df[!,x] : occursin.("true",df[!,x],)
-    # end
-    streak_table = by(df, :Trial) do dd
+    streak_table = combine(groupby(df, :Trial)) do dd
         dt = DataFrame(
         Num_pokes = size(dd,1),
         Num_Rewards = length(findall(skipmissing(dd[!,:Reward]))),
@@ -23,7 +18,7 @@ function process_streaks(df::DataFrames.AbstractDataFrame)
         Stop_trial = (dd[end,:ROI_Out]),
         Pre_Interpoke = nrow(dd) > 1 ? maximum(skipmissing(dd[!,:Pre_Interpoke])) : missing,
         Post_Interpoke = nrow(dd) > 1 ? maximum(skipmissing(dd[!,:Post_Interpoke])) : missing,
-        PokeSequence = [SVector{nrow(dd),Union{Bool,Missing}}(dd[!,:Reward])],
+        #PokeSequence = [SVector{nrow(dd),Union{Bool,Missing}}(dd[!,:Reward])],
         Protocol = dd[1,:Protocol],
         Side = dd[1,:Side],
         ReverseTrial = dd[1,:ReverseTrial]

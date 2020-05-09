@@ -4,25 +4,24 @@ function process_pokes(ongoing::AbstractDict)
 end
 
 function process_pokes(curr_data::AbstractDataFrame)
-    curr_data[!,:Poke_within_Trial] .= 0
     curr_data[!,:Poke_within_Trial] = Vector{Union{Float64,Missing}}(undef,size(curr_data,1))
     curr_data[!,:Pre_Interpoke] = Vector{Union{Float64,Missing}}(undef,size(curr_data,1))
     curr_data[!,:Post_Interpoke] = Vector{Union{Float64,Missing}}(undef,size(curr_data,1))
-    # curr_data[!,:Poke_Hierarchy] .= Vector{Union{Int64,Missing}}(undef,size(curr_data,1))
     curr_data[!,:LastPoke] .= false
-    by(curr_data,:Trial) do dd
+    combine(groupby(curr_data,:Trial)) do dd
         dd[:,:Poke_within_Trial] = collect(1:nrow(dd))
         dd[:,:Pre_Interpoke] =  dd[!,:PokeIn] .-lag(dd[!,:PokeOut],default = missing)
         dd[:,:Post_Interpoke] = lead(dd[!,:PokeIn],default = missing).- dd[!,:PokeOut]
-        #dd[:,:Poke_Hierarchy] = ismissing(dd[1,:Reward]) ? missing : get_hierarchy(dd[!,:Reward])
         dd[end,:LastPoke] = true
     end
     curr_data.Poke_Hierarchy = Vector{Union{Float64,Missing}}(undef,nrow(curr_data))
-    by(curr_data,:Trial) do dd
+    combine(groupby(curr_data,:Trial)) do dd
          dd[:,:Poke_Hierarchy] = ismissing(dd[1,:Reward]) ? [missing] : Switching.get_hierarchy(dd.Reward)
     end
     curr_data[!,:ReverseTrial] .= reverse(curr_data[:,:Trial])
     curr_data[!,:Correct] = [ismissing(x) ? false : true for x in curr_data[!,:Poke]]
+    curr_data[!,:PokeDuration] = curr_data.PokeOut - curr_data.PokeIn
+    filter!(r -> r.PokeDuration > 0.15,curr_data)
     return curr_data
 end
 

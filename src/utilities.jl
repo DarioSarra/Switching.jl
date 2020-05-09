@@ -26,7 +26,7 @@ end
 
 function exp_calendar(df::AbstractDataFrame,Phase::Symbol)
     PhaseCalendar = Dict()
-    by(df,Phase) do dd
+    combine(groupby(df,Phase)) do dd
         for (n,d) in enumerate(sort(union(dd[:,:Day])))
             PhaseCalendar[d] = n
         end
