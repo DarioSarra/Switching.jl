@@ -21,6 +21,7 @@ function process_pokes(curr_data::AbstractDataFrame)
     curr_data[!,:ReverseTrial] .= reverse(curr_data[:,:Trial])
     curr_data[!,:Correct] = [ismissing(x) ? false : true for x in curr_data[!,:Poke]]
     curr_data[!,:PokeDuration] = curr_data.PokeOut - curr_data.PokeIn
+    curr_data[!,:Stim_Day] .= length(union(curr_data.Stim)) > 1
     filter!(r -> r.PokeDuration > 0.15,curr_data)
     return curr_data
 end
@@ -32,14 +33,16 @@ function adjust_matfile(ongoing::AbstractDict)
     outcomesL = ongoing["saved_history"]["switching2_LrewList"]
     protocolsR = ongoing["saved_history"]["switching2_current_rightMax"]
     protocolsL = ongoing["saved_history"]["switching2_current_leftMax"]
+    Stimulation = ongoing["saved_history"]["LaserSection_currentStim"]
     #this is what contains the series of pokes
     trials_vec = ongoing["saved_history"]["ProtocolsSection_parsed_events"]
     poke_count = 0
     #create an empty dataframe wher to push single poke rows info
     df = DataFrame(Poke = Union{Int64,Missing}[], Trial = Int64[],
-        PokeIn = Union{Float64,Missing}[],PokeOut = Union{Float64,Missing}[],
+        PokeIn = Union{Float64,Missing}[], PokeOut = Union{Float64,Missing}[],
         Side = Union{String,Missing}[], Reward = Union{Bool,Missing}[],
-        ROI_In = Float64[], ROI_Out = Float64[], Protocol = Union{String,Missing}[])
+        ROI_In = Float64[], ROI_Out = Float64[], Protocol = Union{String,Missing}[],
+        Stim = Union{Bool,Missing}[])
 
     #loops over the trials and index them
     for (idx,t) in enumerate(trials_vec)
@@ -61,11 +64,13 @@ function adjust_matfile(ongoing::AbstractDict)
             side = "R"
             outcomes = outcomesR[idx]
             protocol = string(protocolsR[idx])
+            stim = Bool(Stimulation[idx])
         elseif length(t["pokes"]["L"]) > 0
             p = t["pokes"]["L"]
             side = "L"
             outcomes = outcomesL[idx]
             protocol = string(protocolsL[idx])
+            stim = Bool(Stimulation[idx])
         else
             p = nothing
         end
@@ -76,10 +81,10 @@ function adjust_matfile(ongoing::AbstractDict)
                 rew = i>20 ? false : Bool(outcomes[i])
                 p[1] = isnan(p[1]) ? default_in : p[1]
                 p[end] = isnan(p[end]) ? default_out : p[end]
-                push!(df,[poke_count,idx,p[i,1],p[i,2],side,rew,ROI_activity_in,ROI_activity_out,protocol])
+                push!(df,[poke_count,idx,p[i,1],p[i,2],side,rew,ROI_activity_in,ROI_activity_out,protocol,stim])
             end
         else
-            push!(df,[missing,idx,ROI_activity_in,ROI_activity_out,missing,missing,ROI_activity_in,ROI_activity_out,missing])
+            push!(df,[missing,idx,ROI_activity_in,ROI_activity_out,missing,missing,ROI_activity_in,ROI_activity_out,missing,missing])
         end
 
     end
