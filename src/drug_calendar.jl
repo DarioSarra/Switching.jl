@@ -48,9 +48,9 @@ Drug_assignment["SB242084"]["Group B"] = ["None","PreVehicle","SB242084","PostVe
 Drug_assignment["SB242084"]["Days"] = SB_per
 Drug_assignment["Optogenetic"]["Group C"] = ["Saline", "Saline", "Saline","Saline", "SB242084_opt", "None",
                                           "Saline", "Saline", "Saline", "SB242084_opt", "Saline", "Saline",
-                                           "Saline", "SB242084", "Saline", "Saline", "SB242084_opt"]
+                                           "Saline", "SB242084_opt", "Saline", "Saline", "SB242084_opt"]
 Drug_assignment["Optogenetic"]["Group D"] = ["Saline", "Saline", "Saline", "SB242084_opt", "Saline", "None",
-                                          "Saline", "SB242084","Saline", "Saline", "Saline", "SB242084_opt",
+                                          "Saline", "SB242084_opt","Saline", "Saline", "Saline", "SB242084_opt",
                                           "Saline", "Saline", "Saline","SB242084_opt", "Saline"]
 Drug_assignment["Optogenetic"]["Days"] = Opto_per
 
