@@ -1,6 +1,6 @@
 function process_session(filename::String)
     ongoing = MAT.matread(filename)
-    MouseID = match(r"[a,b,c,d,p]{1,2}\d{1}",filename).match #ongoing["saved_history"]["SavingSection_ratname"][3]
+    MouseID = match(r"[a,b,c,d,p]{1,2}\d{1,2}",filename).match #ongoing["saved_history"]["SavingSection_ratname"][3]
     preday = match(r"\d{6}",filename).match
     println(preday," ",MouseID)
     Day = Date("20"*replace(preday,r"a.mat" => ""),"yyyymmdd")
