@@ -1,5 +1,6 @@
 function process_pokes(ongoing::AbstractDict)
     curr_data = adjust_matfile(ongoing)
+    dropmissing!(curr_data, :Trial)
     process_pokes(curr_data)
 end
 
@@ -22,7 +23,7 @@ function process_pokes(curr_data::AbstractDataFrame)
     curr_data[!,:Correct] = [ismissing(x) ? false : true for x in curr_data[!,:Poke]]
     curr_data[!,:PokeDuration] = curr_data.PokeOut - curr_data.PokeIn
     curr_data[!,:Stim_Day] .= length(union(curr_data.Stim)) > 1
-    filter!(r -> r.PokeDuration > 0.15,curr_data)
+    # filter!(r -> r.PokeDuration > 0.10,curr_data)
     return curr_data
 end
 
@@ -37,8 +38,9 @@ function adjust_matfile(ongoing::AbstractDict)
     #this is what contains the series of pokes
     trials_vec = ongoing["saved_history"]["ProtocolsSection_parsed_events"]
     poke_count = 0
+    falsetrial_count = 0
     #create an empty dataframe wher to push single poke rows info
-    df = DataFrame(Poke = Union{Int64,Missing}[], Trial = Int64[],
+    df = DataFrame(Poke = Union{Int64,Missing}[], Trial = Union{Int64,Missing}[],
         PokeIn = Union{Float64,Missing}[], PokeOut = Union{Float64,Missing}[],
         Side = Union{String,Missing}[], Reward = Union{Bool,Missing}[],
         ROI_In = Float64[], ROI_Out = Float64[], Protocol = Union{String,Missing}[],
@@ -77,14 +79,15 @@ function adjust_matfile(ongoing::AbstractDict)
         # if poke isn't nothing loops over the pokes to push all the info in 1 row
         if !isnothing(p)
             for i  = 1:size(p,1)
-                poke_count = poke_count + 1
+                poke_count += 1
                 rew = i>20 ? false : Bool(outcomes[i])
                 p[1] = isnan(p[1]) ? default_in : p[1]
                 p[end] = isnan(p[end]) ? default_out : p[end]
-                push!(df,[poke_count,idx,p[i,1],p[i,2],side,rew,ROI_activity_in,ROI_activity_out,protocol,stim])
+                push!(df,[poke_count,idx-falsetrial_count,p[i,1],p[i,2],side,rew,ROI_activity_in,ROI_activity_out,protocol,stim])
             end
         else
-            push!(df,[missing,idx,ROI_activity_in,ROI_activity_out,missing,missing,ROI_activity_in,ROI_activity_out,missing,missing])
+            falsetrial_count += 1
+            push!(df,[missing,missing,missing,missing,missing,missing,ROI_activity_in,ROI_activity_out,missing,missing])
         end
 
     end
